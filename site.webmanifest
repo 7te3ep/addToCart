@@ -1,0 +1,7 @@
+{
+    "name": "Add to Cart",
+    "short_name": "Add to Cart",
+    "theme_color": "##e6f0ed",
+    "background_color": "##e6f0ed",
+    "display": "standalone"
+  }

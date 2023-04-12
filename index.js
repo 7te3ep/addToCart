@@ -25,7 +25,6 @@ const addItemToShoppingList = (value) => {
         remove(ref(database,`shoppingList/${value[0]}`))
     })
 }
-
 const clearShoppingList = ()=> front.shoppingList.innerHTML = ""
 
 front.addButton.addEventListener("click",(e)=>{

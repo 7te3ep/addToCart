@@ -3,7 +3,8 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 5vw;
+    font-size: 20px;
+    user-select: none;
 }
 
 body {
@@ -19,17 +20,20 @@ body {
 }
 
 body > * {
-    margin: 5vw;
+    margin: 20px;
 }
 
 img {
-    max-width: 30%;
+    max-width: 30vw;
+    max-height: 30vh;
 }
 
 input {
     text-align: center;
-    width: 60%;
+    width: 90%;
+    max-width: 500px;
     height: 10vw;
+    max-height: 70px;
     border: none;
     background-color: #dceae5;
     padding: 10px;
@@ -42,8 +46,10 @@ input {
 
 button {
     font-weight: bold;
-    width: 60%;
+    width: 90%;
+    max-width: 500px;
     height: 10vw;
+    max-height: 70px;
     border: none;
     background-color: rgb(255, 186, 108);
     border-radius: 10px;
