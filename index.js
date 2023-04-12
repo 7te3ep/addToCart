@@ -27,11 +27,10 @@ front.addButton.addEventListener("click",(e)=>{
 })
 
 onValue(shoppingListToDb,(snapshot)=>{
-    let itemArray = snapshot.val() != null ? Object.values(snapshot.val()) : []
-    if (itemArray.length == 0) return
+    let itemArray = snapshot.val() != null ? Object.entries(snapshot.val()) : []
     clearShoppingList()
     for (let i = 0; i< itemArray.length; i++){
-        let currentItem = itemArray[i]
+        let currentItem = itemArray[i][1]
         addItemToShoppingList(currentItem)
     }
 })
