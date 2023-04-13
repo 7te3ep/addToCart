@@ -10,12 +10,24 @@ const database = getDatabase(app)
 const shoppingListToDb = ref(database, "shoppingList")
 
 const front = {
+    usernameInput: document.getElementById("usernameInput"),
+    passwordInput: document.getElementById("passwordInpu"),
+    loginButton: document.getElementById("loginButton"),
     inputField : document.getElementById("inputField"),
     addButton : document.getElementById("addButton"),
     shoppingList : document.getElementById("shoppingList")
 }
 
 const clearInputField = () => inputField.value = ""
+
+const showApp = (show)=>{
+    document.querySelectorAll('.login').forEach((item)=>{
+        item.style.display = show ? "none":"flex"
+    })
+    document.querySelectorAll('.app').forEach((item)=>{
+        item.style.display = show ? "flex":"none"
+    })
+}
 
 const addItemToShoppingList = (value) => {
     let newEl = document.createElement('li')
@@ -34,6 +46,10 @@ front.addButton.addEventListener("click",(e)=>{
     push(shoppingListToDb,inputValue)
 })
 
+front.loginButton.addEventListener("click",(e)=>{
+    showApp(true)
+})
+
 onValue(shoppingListToDb,(snapshot)=>{
     let itemArray = snapshot.val() != null ? Object.entries(snapshot.val()) : []
     clearShoppingList()
@@ -42,3 +58,5 @@ onValue(shoppingListToDb,(snapshot)=>{
         addItemToShoppingList(currentItem)
     }
 })
+
+showApp(false)

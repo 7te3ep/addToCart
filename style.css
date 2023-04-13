@@ -29,7 +29,9 @@ img {
 }
 
 input {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 90%;
     max-width: 500px;
     height: 10vw;
@@ -45,6 +47,9 @@ input {
 }
 
 button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-weight: bold;
     width: 90%;
     max-width: 500px;
