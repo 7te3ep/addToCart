@@ -1,5 +1,5 @@
 import { initializeApp} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase , ref , push , onValue , remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase , ref , push , onValue , remove, get, off } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
     databaseURL:"https://playground-6e058-default-rtdb.europe-west1.firebasedatabase.app/"
@@ -7,20 +7,48 @@ const appSettings = {
 
 const app = initializeApp(appSettings)
 const database = getDatabase(app)
-const shoppingListToDb = ref(database, "shoppingList")
+var user = {name:undefined}
 
 const front = {
+    accountTitle : document.getElementById("accountTitle"),
     usernameInput: document.getElementById("usernameInput"),
-    passwordInput: document.getElementById("passwordInpu"),
+    passwordInput: document.getElementById("passwordInput"),
     loginButton: document.getElementById("loginButton"),
-    inputField : document.getElementById("inputField"),
+    addItemInput : document.getElementById("addItemInput"),
     addButton : document.getElementById("addButton"),
-    shoppingList : document.getElementById("shoppingList")
+    shoppingList : document.getElementById("shoppingList"),
+    logoutButton: document.getElementById("logoutButton")
 }
 
-const clearInputField = () => inputField.value = ""
+// TOOLS
+function clearInputField(input){
+    input.forEach((input)=>input.value = "")
+}
 
-const showApp = (show)=>{
+function clearShoppingList(){
+    front.shoppingList.innerHTML = ""
+}
+
+function showLoader(show){
+    document.querySelectorAll('.loader').forEach((item)=>{
+        item.style.display = show ? "block":"none"
+    })
+}
+
+function showApp (show,username){
+    if (show){
+        user.name = username
+        onValue(ref(database, '/users/'+username+'/list/'),(snapshot)=>{
+            clearShoppingList()
+            if (!snapshot.exists()) return
+            const itemsInDb = Object.entries(snapshot.val())
+            for (let i = 0; i< itemsInDb.length; i++){
+                let currentItem = itemsInDb[i]
+                addItemToShoppingList(currentItem)
+            }
+        });
+    }
+
     document.querySelectorAll('.login').forEach((item)=>{
         item.style.display = show ? "none":"flex"
     })
@@ -29,34 +57,67 @@ const showApp = (show)=>{
     })
 }
 
-const addItemToShoppingList = (value) => {
+function addItemToShoppingList (item) {
+    const id = item[0]
+    const content = item[1]
+
     let newEl = document.createElement('li')
-    newEl.textContent = value[1]
+    newEl.textContent = content
     front.shoppingList.append(newEl)
+
     newEl.addEventListener("click",()=>{
-        remove(ref(database,`shoppingList/${value[0]}`))
+        remove(ref(database,`users/`+user.name+`/list/${id}`))
     })
 }
-const clearShoppingList = ()=> front.shoppingList.innerHTML = ""
+
+function userLogin(username,password){
+    return new Promise((resolve)=>{
+        get(ref(database,"users/"+username)).then((snapshot) => {
+            if (snapshot.exists() == false) resolve("Creating Account")
+            else {
+                const userData = Object.values(snapshot.val())
+                if (userData[0] == password) resolve("Connecting")
+                else resolve("Invalid Password")
+            }
+        })
+    })
+}
+
+function createAccount(username,password){
+    push(ref(database,`users/${username}`),password)
+    showApp(true,username)
+}
+
+// EVENT
 
 front.addButton.addEventListener("click",(e)=>{
-    let inputValue = front.inputField.value
-    clearInputField()
-    if (inputValue.length == 0) return
-    push(shoppingListToDb,inputValue)
+    const inputValue = front.addItemInput.value
+    if (inputValue.trim().length == 0) return
+    push(ref(database,"users/"+user.name+"/list/"),inputValue)
+    clearInputField([front.addItemInput])
 })
 
 front.loginButton.addEventListener("click",(e)=>{
-    showApp(true)
+    const username = front.usernameInput.value
+    const password = front.passwordInput.value
+    if (username.trim().length == 0 || password.trim().length == 0) return
+    showLoader(true)
+    userLogin(username,password).then((result)=>{
+        showLoader(false)
+        document.getElementById('loginOutput').innerHTML = result
+        if (result == "Connecting") showApp(true,username)
+        else if (result == "Creating Account") createAccount(username,password)
+        clearInputField([usernameInput,passwordInput])
+    })
 })
 
-onValue(shoppingListToDb,(snapshot)=>{
-    let itemArray = snapshot.val() != null ? Object.entries(snapshot.val()) : []
-    clearShoppingList()
-    for (let i = 0; i< itemArray.length; i++){
-        let currentItem = itemArray[i]
-        addItemToShoppingList(currentItem)
-    }
+// LOGOUT
+front.logoutButton.addEventListener("click",(e)=>{
+    off(ref(database,'users/'+user.name+'/list/'))
+    user.name = undefined
+    showApp(false)
 })
 
+showLoader(false)
 showApp(false)
+

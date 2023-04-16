@@ -8,16 +8,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <span id="loader" class="loader"></span>
+    <span id="blur" class="loader"></span>
 
+    <h1 class="login">Login</h1>
     <input class="login" id="usernameInput" type="text" placeholder="username">
     <input class="login" id="passwordInput" type="password" placeholder="password">
+    <p class="login" id="loginOutput"></p>
+
     <button class="login" id="loginButton">Connect</button>
 
+    <p class="app" id="accountTitle"></p>
+    <button  class="app" id="logoutButton">Log Out</button>
     <h1 class="app" >Add to Cart</h1>
     <img class="app" src="./mainIllu.webp" alt="">
-    <input  class="app" type="text" id="inputField" placeholder="bread">
+    <input  class="app" type="text" id="addItemInput" placeholder="bread">
     <button  class="app" id="addButton">Add To Cart</button>
-    <ul  class="app" id="shoppingList">
+    <ul class="app" id="shoppingList">
     </ul>
     <script src="index.js" type="module"></script>
 </body>
